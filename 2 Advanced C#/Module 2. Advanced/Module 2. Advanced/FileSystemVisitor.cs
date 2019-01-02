@@ -19,10 +19,10 @@ namespace Task1
         /// Path to directory from which start searching for files and folders.
         /// </summary>
         private readonly string _path;
+
         /// <summary>
-        /// Delegate for filtering files and folders.
+        /// Field that holds StopSearch flag value.
         /// </summary>
-        private readonly Func<FileSystemInfo, bool> _filter;
         private bool _stopSearch;
 
         /// <summary>
@@ -40,19 +40,99 @@ namespace Task1
         #region Delegates
         public delegate void EventDelegate();
         public delegate void ElementFoundDelegate(string elementFullName);
+
+        /// <summary>
+        /// Delegate for filtering files and folders.
+        /// </summary>
+        private readonly Func<FileSystemInfo, bool> _filter;
         #endregion
 
         #region Events
+
         ///<summary>
         /// Event for starting search.
         ///</summary>
-        public event EventDelegate 
+        public event EventDelegate Start;
+
+        ///<summary>
+        /// Event for finishing search.
+        ///</summary>
+        public event EventDelegate Finish;
+
+        ///<summary>
+        /// Event for found file.
+        /// </summary>
+        public event ElementFoundDelegate FileFound;
+
+        ///<summary>
+        /// Event for found folder.
+        /// </summary>
+        public event ElementFoundDelegate DirectoryFound;
+
+        ///<summary>
+        /// Event for filtered found file.
+        /// </summary>
+        public event ElementFoundDelegate FilteredFileFound;
+
+        ///<summary>
+        /// Event for filtered found folder.
+        /// </summary>
+        public event ElementFoundDelegate FilteredFolderFound;
         #endregion
 
+        #region Constructors
 
-        #region Implementation of IEnumerable
+        ///<summary>
+        /// Constructor for creating FileSystemVisitor object.
+        /// </summary>
+        public FileSystemVisitor(string path, Func<FileSystemInfo, bool> filter = null)
+        {
+            _files = new List<FileSystemInfo>();
+            _path = path;
+            _filter = filter;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
-        /// Search for files and folders in chosen folder.
+        /// Start for files and folders based on specified conditions.
+        /// </summary>
+        public void Execute()
+        {
+            Start?.Invoke();
+            foreach (var file in GetDirectoryFiles(_path))
+            {
+                if (_stopSearch) break;
+                if (_filter == null)
+                {
+                    if (file.GetType() == typeof(FileInfo)) FileFound?.Invoke(file.FullName);
+                    else
+                    {
+                        DirectoryFound?.Invoke(file.FullName);
+                    }
+
+                    if (!DeleteElementFlag) _files.Add(file);
+                    DeleteElementFlag = false;
+                    _stopSearch = StopSearchFlag;
+                }
+                else
+                {
+                    if (file.GetType() == typeof(FileInfo)) FilteredFileFound?.Invoke(file.FullName);
+                    else FilteredFolderFound?.Invoke(file.FullName);
+
+                    if (!DeleteElementFlag && _filter(file)) _files.Add(file);
+                    DeleteElementFlag = false;
+                    _stopSearch = StopSearchFlag;
+                }
+
+            }
+            Finish?.Invoke();
+        }
+
+        /// <summary>
+        /// Recursive file and folder search.
         /// </summary>
         /// <param name="path">Folder where to search for files and folders</param>
         /// <result>FileInfo and DirectoryInfo objects found for current folder</result>
@@ -76,9 +156,9 @@ namespace Task1
                 }
             }
         }
-
         #endregion
 
+        #region IEnumerable interface implementation.
         /// <summary>
         /// Implementation of IEnumerable interface
         /// </summary>
@@ -96,7 +176,26 @@ namespace Task1
                 index = -1;
             }
 
-            public bool MoveNext() => ++index < fileSystemVisitor._file
+            public bool MoveNext() => ++index < fileSystemVisitor._files.Count;
+
+            public FileSystemInfo Current
+            {
+                get
+                {
+                    if (index <= -1 || index >=fileSystemVisitor._files.Count)
+                        throw new InvalidOperationException();
+                    return fileSystemVisitor._files[index];
+                }
+            }
+
+            object IEnumerator.Current => Current;
+
+            void IEnumerator.Reset()
+            {
+                index = -1;
+            }
         }
+        #endregion
+
     }
 }

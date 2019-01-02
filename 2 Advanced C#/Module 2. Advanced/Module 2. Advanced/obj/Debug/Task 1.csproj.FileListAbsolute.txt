@@ -1,0 +1,7 @@
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\bin\Debug\Module_2.Advanced.exe.config
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\bin\Debug\Module_2.Advanced.exe
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\bin\Debug\Module_2.Advanced.pdb
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\obj\Debug\Task 1.csprojAssemblyReference.cache
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\obj\Debug\Task 1.csproj.CoreCompileInputs.cache
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\obj\Debug\Module_2.Advanced.exe
+H:\Al_Sid\C# Sandbox\L1-anew-\2 Advanced C#\Module 2. Advanced\Module 2. Advanced\obj\Debug\Module_2.Advanced.pdb
